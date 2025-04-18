@@ -1,26 +1,37 @@
-import "module-alias/register";
 import dotenv from "dotenv";
 dotenv.config();
+import models, { sequelize } from "./models";
 import express from "express";
 import http from "http";
 import Config from "./config/index";
+import { router } from "./routes";
 
 const app = express();
 const server = http.createServer(app);
 
-// Middleware to parse JSON requests
+// Middleware setup
 app.use(express.json());
-// Middleware to parse URL-encoded requests
 app.use(express.urlencoded({ extended: true }));
-// Middleware to serve static files
 app.use(express.static("public"));
-// Middleware to log requests
-// app.use((req, res, next) => {
-//   console.log(`${req.method} ${req.url}`);
-//   next();
-// });
 
-
-server.listen(Config.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+// Routes
+app.use("/api", router);
+app.get("/", (req, res) => {
+  res.send("Welcome to the API");
 });
+
+// Database connection and server start
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log("DB connected.");
+    return sequelize.sync();
+  })
+  .then(() => {
+    server.listen(Config.PORT, () => {
+      console.log(`Server is running on port ${Config.PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Unable to connect to the database:", error);
+  });
