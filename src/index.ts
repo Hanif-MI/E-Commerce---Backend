@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
-import models, { sequelize } from "./models";
+import { sequelize } from "./models";
 import express from "express";
 import http from "http";
 import Config from "./config/index";
@@ -16,11 +16,7 @@ app.use(express.static("public"));
 
 // Routes
 app.use("/api", router);
-app.get("/", (req, res) => {
-  res.send("Welcome to the API");
-});
 
-// Database connection and server start
 sequelize
   .authenticate()
   .then(() => {
