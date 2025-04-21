@@ -24,3 +24,18 @@ export const authValidations = {
     return callback(true);
   },
 };
+
+
+export const verifyEmailSchema = (
+  req: Request,
+  res: Response,
+  callback: (result: boolean) => {}
+) => {
+  const schema = Joi.object({
+    token: Joi.string().required(),
+  });
+
+  const { error } = schema.validate(req.params);
+  if (error) res.send(`Something went wrong ${error.message}`);
+  return callback(true);
+};
